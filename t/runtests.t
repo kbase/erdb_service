@@ -41,7 +41,7 @@ my $expected = [
           ]
         ];
     
-print Dumper($res);
-print Dumper($expected);
 is_deeply($res, $expected, 'checking simple query');
-Server::stop($pid, $url)
+Server::stop($pid, $url);
+
+done_testing(1);
