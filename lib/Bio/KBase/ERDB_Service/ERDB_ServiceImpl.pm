@@ -165,7 +165,7 @@ sub GetAll
     my($return);
     #BEGIN GetAll
     
-    $return = \($self->{db}->GetAll($objectNames, $filterClause, $parameters, $fields, $count));
+    $return = [$self->{db}->GetAll($objectNames, $filterClause, $parameters, $fields, $count)];
     
     #END GetAll
     my @_bad_returns;
