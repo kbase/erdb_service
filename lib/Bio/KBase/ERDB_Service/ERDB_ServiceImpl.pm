@@ -34,6 +34,37 @@ sub new
     };
     bless $self, $class;
     #BEGIN_CONSTRUCTOR
+    #Copied from M. Sneddon's TreeImpl.pm from trees.git f63b672dc14f4600329424bc6b404b507e9c2503
+    #might want to make this an imported module in kbase or something
+    my($cdmi) = @args;
+    if (! $cdmi) {
+
+	# if not, then go to the config file defined by the deployment and import
+	# the deployment settings
+	my %params;
+	if (my $e = $ENV{KB_DEPLOYMENT_CONFIG}) {
+	    my $CDMI_SERVICE_NAME = "cdmi";
+	    
+	    my $c = Config::Simple->new();
+	    $c->read($e);
+	    my @params = qw(DBD dbName sock userData dbhost port dbms develop);
+	    for my $p (@params)
+	    {
+			my $v = $c->param("$CDMI_SERVICE_NAME.$p");
+			if ($v)
+			{
+		    	$params{$p} = $v;
+			}
+	    }
+	}
+	#Create a connection to the CDMI (and print a logging debug mssg)
+	if( 0 < scalar keys(%params) ) {
+	    	warn "Connection to CDMI established with the following non-default parameters:\n";
+	    	foreach my $key (sort keys %params) { warn "   $key => $params{$key} \n"; }
+	} else { warn "Connection to CDMI established with all default parameters.  See Bio/KBase/CDMI/CDMI.pm\n"; }
+        $cdmi = Bio::KBase::CDMI::CDMI->new(%params);
+    }
+    $self->{db} = $cdmi;
     #END_CONSTRUCTOR
 
     if ($self->can('_init_instance'))
@@ -130,6 +161,9 @@ sub GetAll
     my $ctx = $Bio::KBase::ERDB_Service::Server::CallContext;
     my($return);
     #BEGIN GetAll
+    
+    $return = \($self->{db}->GetAll($objectNames, $filterClause, $parameters, $fields, $count));
+    
     #END GetAll
     my @_bad_returns;
     (ref($return) eq 'ARRAY') or push(@_bad_returns, "Invalid type for return variable \"return\" (value was \"$return\")");

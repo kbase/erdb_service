@@ -1,5 +1,5 @@
 # configurable variables
-SERVICE = ERDBService
+SERVICE = ERDB_Service
 SERVICE_PORT = 7055 # temporary until assigned a permanent port
 
 #standalone variables, replaced when run via /kb/dev_container/Makefile
