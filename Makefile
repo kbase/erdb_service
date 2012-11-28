@@ -60,7 +60,7 @@ test: test-client test-scripts
 test-all: test-service test-client test-scripts
 
 test-client:
-	#$(DEPLOY_RUNTIME)/bin/perl $(TOP_DIR)/modules/$(SERVICE)/t/runtests.t $(SERVICE_NAME)
+	$(DEPLOY_RUNTIME)/bin/perl $(TOP_DIR)/modules/$(SERVICE)/t/runtests.t $(SERVICE_NAME)
 
 test-scripts:
 	echo "This service has no scripts."
