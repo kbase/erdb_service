@@ -25,6 +25,9 @@ the ERDB.
 =cut
 
 #BEGIN_HEADER
+
+use Bio::KBase::CDMI::CDMI;
+
 #END_HEADER
 
 sub new
