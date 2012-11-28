@@ -10,7 +10,9 @@ print "Testing service $ARGV[0]\n";
 
 my ($pid, $url) = Server::start($ARGV[0]);
 print "-> attempting to connect to:'".$url."'\n";
-my $client = Bio::KBase::FileType::Client->new($url);
+my $client;
+my $eval = "use Bio::KBase::$ARGV[0]::Client; \$client = Bio::KBase::$ARGV[0]::Client->new(\$url);";
+eval $eval;
 
 my $objectNames = 'Genome IsComposedOf Contig';
 my $filterClause = 'Genome(id) IN (?, ?) ORDER BY Genome(id)';
