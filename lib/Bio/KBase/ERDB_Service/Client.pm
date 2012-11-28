@@ -94,7 +94,7 @@ fieldValue is a string
 
 =item Description
 
-Wrapper for the GetAll function documented <a href='http://pubseed.theseed.org/sapling/server.cgi?pod=ERDB#GetAll'>here</a>.
+Wrapper for the GetAll function documented L<here|http://pubseed.theseed.org/sapling/server.cgi?pod=ERDB#GetAll>.
 Note that the objectNames and fields arguments must be strings; array references are not allowed.
 
 =back
