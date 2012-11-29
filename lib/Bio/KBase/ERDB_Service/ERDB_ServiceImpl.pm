@@ -27,6 +27,7 @@ the ERDB.
 #BEGIN_HEADER
 
 use Bio::KBase::CDMI::CDMI;
+use Config::Simple;
 
 #END_HEADER
 
