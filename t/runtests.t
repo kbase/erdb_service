@@ -21,10 +21,10 @@ $url='http://localhost:7060' unless ($localServer);
 ($pid, $url) = Server::start($ARGV[0]) unless ($url);
 print "Testing service $ARGV[0] on $url\n";
 
+my $class="Bio::KBase::$ARGV[0]::Client";
 print "-> attempting to connect to:'".$url."'\n";
-my $client;
-use_ok("Bio::KBase::$ARGV[0]::Client","use Client");
-my $client=new_ok(Bio::KBase::$ARGV[0]::Client=>$url);
+use_ok($class,"use Client");
+my $client=new_ok($class=>$url);
 
 #my $eval = "use Bio::KBase::$ARGV[0]::Client; \$client = Bio::KBase::$ARGV[0]::Client->new(\$url);";
 #eval $eval;
