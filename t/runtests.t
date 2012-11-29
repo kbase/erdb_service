@@ -54,6 +54,6 @@ my $expected = [
         ];
     
 is_deeply($res, $expected, 'checking simple query');
-Server::stop($pid, $url);
+Server::stop($pid, $url) if ($pid);
 
 done_testing(1);
