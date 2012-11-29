@@ -23,8 +23,10 @@ print "Testing service $ARGV[0] on $url\n";
 
 my $class="Bio::KBase::$ARGV[0]::Client";
 print "-> attempting to connect to:'".$url."'\n";
-use_ok($class,"use Client");
-my $client=new_ok($class=>$url);
+BEGIN {
+	use_ok($class,"use Client");
+}
+my $client=new_ok($class=>[ $url ]);
 
 #my $eval = "use Bio::KBase::$ARGV[0]::Client; \$client = Bio::KBase::$ARGV[0]::Client->new(\$url);";
 #eval $eval;
