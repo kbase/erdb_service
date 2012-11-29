@@ -24,9 +24,10 @@ print "Testing service $ARGV[0] on $url\n";
 print "-> attempting to connect to:'".$url."'\n";
 my $client;
 use_ok("Bio::KBase::$ARGV[0]::Client","use Client");
+my $client=new_ok(Bio::KBase::$ARGV[0]::Client=>$url);
 
-my $eval = "use Bio::KBase::$ARGV[0]::Client; \$client = Bio::KBase::$ARGV[0]::Client->new(\$url);";
-eval $eval;
+#my $eval = "use Bio::KBase::$ARGV[0]::Client; \$client = Bio::KBase::$ARGV[0]::Client->new(\$url);";
+#eval $eval;
 
 my $objectNames = 'Genome IsComposedOf Contig';
 my $filterClause = 'Genome(id) IN (?, ?) ORDER BY Genome(id)';
@@ -58,4 +59,4 @@ my $expected = [
 is_deeply($res, $expected, 'checking simple query');
 Server::stop($pid, $url) if ($pid);
 
-done_testing(1);
+done_testing(2);
