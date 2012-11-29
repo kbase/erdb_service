@@ -73,7 +73,7 @@ my $expected = [
 
 {
 	$objectNames=['Genome','IsComposedOf','Contig'];
-	$testName='objectNames bad type';
+	my $testName='objectNames bad type';
 	if($debug)
 	{
 		not_ok($client->GetAll($objectNames, $filterClause, $parameters, $fields, $count), $testName);
