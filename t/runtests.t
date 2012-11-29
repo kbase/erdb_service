@@ -41,7 +41,6 @@ my $filterClause = 'Genome(id) IN (?, ?) ORDER BY Genome(id)';
 my $parameters = ['kb|g.0', 'kb|g.1'];
 my $fields = 'Genome(id) Genome(dna_size) Contig(id) Contig(source-id)';
 my $count = 3;
-my $res = $client->GetAll($objectNames, $filterClause, $parameters, $fields, $count);
 my $expected = [
           [
             'kb|g.0',
@@ -63,9 +62,20 @@ my $expected = [
           ]
         ];
     
-is_deeply($res, $expected, 'checking simple query');
+{
+	my $res = $client->GetAll($objectNames, $filterClause, $parameters, $fields, $count);
+	is_deeply($res, $expected, 'checking simple query, objectNames space-separated string');
 
-++$num_tests;
+	++$num_tests;
+}
+
+{
+	$objectNames=['Genome','IsComposedOf','Contig'];
+	my $res = $client->GetAll($objectNames, $filterClause, $parameters, $fields, $count);
+	is_deeply($res, $expected, 'checking simple query, objectNames arrayref');
+
+	++$num_tests;
+}
 
 Server::stop($pid, $url) if ($pid);
 
