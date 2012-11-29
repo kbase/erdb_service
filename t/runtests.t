@@ -3,12 +3,24 @@ use warnings;
 
 use Data::Dumper;
 use Test::More;
+use Getopt::Long;
 
 use Server;
 
-print "Testing service $ARGV[0]\n";
+my $debug=0;
+my $localServer=0;
+my $getoptResult=GetOptions(
+	'debug' =>      \$debug,
+	'localServer'   =>      \$localServer,
+);
 
-my ($pid, $url) = Server::start($ARGV[0]);
+my ($url,$pid);
+# would be good to extract the port from a config file or env variable
+$url='http://localhost:7060' unless ($localServer);
+# Start a server on localhost if desired
+($pid, $url) = Server::start($ARGV[0]) unless ($url);
+print "Testing service $ARGV[0] on $url\n";
+
 print "-> attempting to connect to:'".$url."'\n";
 my $client;
 my $eval = "use Bio::KBase::$ARGV[0]::Client; \$client = Bio::KBase::$ARGV[0]::Client->new(\$url);";
