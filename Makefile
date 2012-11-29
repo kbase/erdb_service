@@ -38,7 +38,6 @@ compile-typespec:
 	touch lib/biokbase/__init__.py #do not include code in biokbase/__init__.py
 	touch lib/biokbase/$(SERVICE_NAME_PY)/__init__.py #remove if you include code in this __init__.py
 	mkdir -p lib/javascript/$(SERVICE_NAME)
-	mkdir -p scripts
 	compile_typespec \
 		--psgi $(SERVICE_PSGI_FILE) \
 		--impl Bio::KBase::$(SERVICE_NAME)::$(SERVICE_NAME)Impl \
@@ -46,7 +45,6 @@ compile-typespec:
 		--client Bio::KBase::$(SERVICE_NAME)::Client \
 		--py biokbase/$(SERVICE_NAME_PY)/client \
 		--js javascript/$(SERVICE_NAME)/Client \
-		--scripts scripts \
 		$(SERVICE_NAME).spec lib
 	rm -r Bio # For some strange reason, compile_typespec always creates this directory in the root dir!
 
@@ -85,7 +83,7 @@ deploy-client: deploy-docs deploy-scripts
 	echo "deployed clients of $(SERVICE)."
 
 deploy-scripts:
-	echo "scripts are not yet ready to be deployed."
+	echo "This service has no scripts."
 
 deploy-docs:
 	mkdir -p $(SERVICE_DIR)/webroot
@@ -158,6 +156,5 @@ clean:
 	rm -rf lib/biokbase
 	rm -rf lib/javascript
 	rm -rf docs
-	rm -rf scripts
 	rm -f start_service stop_service reboot_service debug_start_service
 
