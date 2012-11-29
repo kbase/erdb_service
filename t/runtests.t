@@ -14,6 +14,8 @@ my $getoptResult=GetOptions(
 	'localServer'   =>      \$localServer,
 );
 
+my $num_tests = 0;
+
 my ($url,$pid);
 # would be good to extract the port from a config file or env variable
 $url='http://localhost:7060' unless ($localServer);
@@ -22,12 +24,14 @@ $url='http://localhost:7060' unless ($localServer);
 print "Testing service $ARGV[0] on $url\n";
 
 my $class="Bio::KBase::$ARGV[0]::Client";
-BEGIN {
-	my $class="Bio::KBase::$ARGV[0]::Client";
-	use_ok($class,"use Client");
-}
+use_ok($class,"use Client");
+
+++$num_tests;
+
 print "-> attempting to connect to:'".$url."'\n";
 my $client=new_ok($class=>[ $url ]);
+
+++$num_tests;
 
 #my $eval = "use Bio::KBase::$ARGV[0]::Client; \$client = Bio::KBase::$ARGV[0]::Client->new(\$url);";
 #eval $eval;
@@ -60,6 +64,9 @@ my $expected = [
         ];
     
 is_deeply($res, $expected, 'checking simple query');
+
+++$num_tests;
+
 Server::stop($pid, $url) if ($pid);
 
-done_testing(2);
+done_testing($num_tests);
