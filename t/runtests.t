@@ -33,6 +33,8 @@ my $client=new_ok($class=>[ $url ]);
 
 ++$num_tests;
 
+isa_ok($client,$class, "Is it the right class?");
+
 #my $eval = "use Bio::KBase::$ARGV[0]::Client; \$client = Bio::KBase::$ARGV[0]::Client->new(\$url);";
 #eval $eval;
 
@@ -71,8 +73,8 @@ my $expected = [
 
 {
 	$objectNames=['Genome','IsComposedOf','Contig'];
-	my $res = $client->GetAll($objectNames, $filterClause, $parameters, $fields, $count);
-	is_deeply($res, $expected, 'checking simple query, objectNames arrayref');
+	not_ok($client->GetAll($objectNames, $filterClause, $parameters, $fields, $count), 'objectNames bad type');
+#	is_deeply($res, $expected, 'checking simple query, objectNames arrayref');
 
 	++$num_tests;
 }
