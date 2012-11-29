@@ -73,7 +73,14 @@ my $expected = [
 
 {
 	$objectNames=['Genome','IsComposedOf','Contig'];
-	not_ok($client->GetAll($objectNames, $filterClause, $parameters, $fields, $count), 'objectNames bad type');
+	$testName='objectNames bad type';
+	if($debug)
+	{
+		not_ok($client->GetAll($objectNames, $filterClause, $parameters, $fields, $count), $testName);
+	} else {
+		eval{$client->GetAll($objectNames, $filterClause, $parameters, $fields, $count);};
+		ok(!$@, $testName);
+	}
 #	is_deeply($res, $expected, 'checking simple query, objectNames arrayref');
 
 	++$num_tests;
