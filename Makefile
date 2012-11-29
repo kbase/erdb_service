@@ -1,6 +1,7 @@
 # configurable variables 
 SERVICE = erdb_service
 SERVICE_NAME = ERDB_Service
+SERVICE_NAME_PY = erdb_service
 SERVICE_PSGI_FILE = $(SERVICE_NAME).psgi
 SERVICE_PORT = 7060
 
@@ -33,9 +34,9 @@ default: all
 all: compile-typespec build-docs
 
 compile-typespec:
-	mkdir -p lib/biokbase/$(SERVICE_NAME)
+	mkdir -p lib/biokbase/$(SERVICE_NAME_PY)
 	touch lib/biokbase/__init__.py #do not include code in biokbase/__init__.py
-	touch lib/biokbase/$(SERVICE_NAME)/__init__.py #remove if you include code in this __init__.py
+	touch lib/biokbase/$(SERVICE_NAME_PY)/__init__.py #remove if you include code in this __init__.py
 	mkdir -p lib/javascript/$(SERVICE_NAME)
 	mkdir -p scripts
 	compile_typespec \
@@ -43,7 +44,7 @@ compile-typespec:
 		--impl Bio::KBase::$(SERVICE_NAME)::$(SERVICE_NAME)Impl \
 		--service Bio::KBase::$(SERVICE_NAME)::Service \
 		--client Bio::KBase::$(SERVICE_NAME)::Client \
-		--py biokbase/$(SERVICE_NAME)/Client \
+		--py biokbase/$(SERVICE_NAME_PY)/client \
 		--js javascript/$(SERVICE_NAME)/Client \
 		--scripts scripts \
 		$(SERVICE_NAME).spec lib
@@ -76,10 +77,10 @@ deploy-all: deploy-client deploy-service
 
 deploy-client: deploy-docs deploy-scripts
 	mkdir -p $(TARGET)/lib/Bio/KBase/$(SERVICE_NAME)
-	mkdir -p $(TARGET)/lib/biokbase/$(SERVICE_NAME)
+	mkdir -p $(TARGET)/lib/biokbase/$(SERVICE_NAME_PY)
 	mkdir -p $(TARGET)/lib/javascript/$(SERVICE_NAME)
 	cp lib/Bio/KBase/$(SERVICE_NAME)/Client.pm $(TARGET)/lib/Bio/KBase/$(SERVICE_NAME)/.
-	cp lib/biokbase/$(SERVICE_NAME)/* $(TARGET)/lib/biokbase/$(SERVICE_NAME)/.
+	cp lib/biokbase/$(SERVICE_NAME_PY)/* $(TARGET)/lib/biokbase/$(SERVICE_NAME_PY)/.
 	cp lib/javascript/$(SERVICE_NAME)/* $(TARGET)/lib/javascript/$(SERVICE_NAME)/.
 	echo "deployed clients of $(SERVICE)."
 
@@ -144,7 +145,7 @@ undeploy:
 	rm -rfv $(SERVICE_DIR)
 	rm -rfv $(TARGET)/lib/Bio/KBase/$(SERVICE_NAME)
 	rm -rfv $(TARGET)/lib/$(SERVICE_PSGI_FILE)
-	rm -rfv $(TARGET)/lib/biokbase/$(SERVICE_NAME)
+	rm -rfv $(TARGET)/lib/biokbase/$(SERVICE_NAME_PY)
 	rm -rfv $(TARGET)/lib/javascript/$(SERVICE_NAME)
 	rm -rfv $(TARGET)/docs/$(SERVICE_NAME)
 	echo "OK ... Removed all deployed files."
