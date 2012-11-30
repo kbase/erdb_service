@@ -35,6 +35,8 @@ my $client=new_ok($class=>[ $url ]);
 
 isa_ok($client,$class, "Is it the right class?");
 
+++$num_tests;
+
 #my $eval = "use Bio::KBase::$ARGV[0]::Client; \$client = Bio::KBase::$ARGV[0]::Client->new(\$url);";
 #eval $eval;
 
@@ -72,16 +74,37 @@ my $expected = [
 }
 
 {
-	$objectNames=['Genome','IsComposedOf','Contig'];
+	my $objectNames=['Genome','IsComposedOf','Contig'];
 	my $testName='objectNames bad type';
-	if($debug)
-	{
-		not_ok($client->GetAll($objectNames, $filterClause, $parameters, $fields, $count), $testName);
-	} else {
-		eval{$client->GetAll($objectNames, $filterClause, $parameters, $fields, $count);};
-		ok(!$@, $testName);
-	}
-#	is_deeply($res, $expected, 'checking simple query, objectNames arrayref');
+	eval{$client->GetAll($objectNames, $filterClause, $parameters, $fields, $count);};
+	like($@, qr/Invalid type/,$testName);
+
+	++$num_tests;
+}
+
+{
+	my $testName='fields bad type';
+	my $fields = [];
+	eval{$client->GetAll($objectNames, $filterClause, $parameters, $fields, $count);};
+	like($@, qr/Invalid type/,$testName);
+
+	++$num_tests;
+}
+
+{
+	my $testName='parameters bad type';
+	my $filterClause = '';
+	eval{$client->GetAll($objectNames, $filterClause, $parameters, $fields, $count);};
+	ok($@, $testName);
+
+	++$num_tests;
+}
+
+{
+	my $testName='filter bad type';
+	my $filterClause = [];
+	eval{$client->GetAll($objectNames, $filterClause, $parameters, $fields, $count);};
+	like($@, qr/Invalid type/,$testName);
 
 	++$num_tests;
 }
