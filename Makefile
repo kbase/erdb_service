@@ -66,7 +66,8 @@ test-client:
 test-scripts:
 	echo "This service has no scripts."
 
-test-service: test-client
+test-service:
+	$(DEPLOY_RUNTIME)/bin/perl -Ilib -It $(TOP_DIR)/modules/$(SERVICE)/t/runtests.t --serviceName $(SERVICE_NAME) --localServer
 
 # here are the standard KBase deployment targets (deploy, deploy-all, deploy-client, deploy-scripts, & deploy-service)
 deploy: deploy-all
