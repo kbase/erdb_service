@@ -11,12 +11,14 @@ my $debug=0;
 my $localServer=0;
 my $host='localhost';
 my $port;
+my $serviceName;
 
 my $getoptResult=GetOptions(
 	'debug' =>      \$debug,
 	'localServer'   =>      \$localServer,
 	'host=s'	=>	\$host,
 	'port=i'	=>	\$port,
+	'serviceName=s'	=>	\$serviceName,
 );
 
 my $num_tests = 0;
@@ -25,10 +27,10 @@ my ($url,$pid);
 # would be good to extract the port from a config file or env variable
 $url="http://$host:$port/" unless ($localServer);
 # Start a server on localhost if desired
-($pid, $url) = Server::start($ARGV[0]) unless ($url);
-print "Testing service $ARGV[0] on $url\n";
+($pid, $url) = Server::start($serviceName) unless ($url);
+print "Testing service $serviceName on $url\n";
 
-my $class="Bio::KBase::$ARGV[0]::Client";
+my $class="Bio::KBase::$serviceName::Client";
 use_ok($class,"use Client");
 
 ++$num_tests;
@@ -41,9 +43,6 @@ my $client=new_ok($class=>[ $url ]);
 isa_ok($client,$class, "Is it the right class?");
 
 ++$num_tests;
-
-#my $eval = "use Bio::KBase::$ARGV[0]::Client; \$client = Bio::KBase::$ARGV[0]::Client->new(\$url);";
-#eval $eval;
 
 my $objectNames = 'Genome IsComposedOf Contig';
 my $filterClause = 'Genome(id) IN (?, ?) ORDER BY Genome(id)';
