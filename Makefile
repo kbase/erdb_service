@@ -58,8 +58,10 @@ test: test-client test-scripts
 
 test-all: test-service test-client test-scripts
 
+# will need to fix the host when code is distributed, to point
+# to the "official" instance
 test-client:
-	$(DEPLOY_RUNTIME)/bin/perl -Ilib -It $(TOP_DIR)/modules/$(SERVICE)/t/runtests.t $(SERVICE_NAME)
+	$(DEPLOY_RUNTIME)/bin/perl -Ilib -It $(TOP_DIR)/modules/$(SERVICE)/t/runtests.t --serviceName $(SERVICE_NAME) --port $(SERVICE_PORT) --host localhost
 
 test-scripts:
 	echo "This service has no scripts."

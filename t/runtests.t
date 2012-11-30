@@ -9,16 +9,21 @@ use Server;
 
 my $debug=0;
 my $localServer=0;
+my $host='localhost';
+my $port;
+
 my $getoptResult=GetOptions(
 	'debug' =>      \$debug,
 	'localServer'   =>      \$localServer,
+	'host=s'	=>	\$host,
+	'port=i'	=>	\$port,
 );
 
 my $num_tests = 0;
 
 my ($url,$pid);
 # would be good to extract the port from a config file or env variable
-$url='http://localhost:7060' unless ($localServer);
+$url="http://$host:$port/" unless ($localServer);
 # Start a server on localhost if desired
 ($pid, $url) = Server::start($ARGV[0]) unless ($url);
 print "Testing service $ARGV[0] on $url\n";
