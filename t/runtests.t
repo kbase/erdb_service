@@ -30,7 +30,7 @@ $url="http://$host:$port/" unless ($localServer);
 ($pid, $url) = Server::start($serviceName) unless ($url);
 print "Testing service $serviceName on $url\n";
 
-my $class="Bio::KBase::$serviceName::Client";
+my $class="Bio::KBase::${serviceName}::Client";
 use_ok($class,"use Client");
 
 ++$num_tests;
