@@ -36,7 +36,7 @@ all: compile-typespec build-docs
 compile-typespec:
 	mkdir -p lib/biokbase/$(SERVICE_NAME_PY)
 	touch lib/biokbase/__init__.py #do not include code in biokbase/__init__.py
-	touch lib/biokbase/$(SERVICE_NAME_PY)/__init__.py #remove if you include code in this __init__.py
+	touch lib/biokbase/$(SERVICE_NAME_PY)/__init__.py 
 	mkdir -p lib/javascript/$(SERVICE_NAME)
 	compile_typespec \
 		--psgi $(SERVICE_PSGI_FILE) \
