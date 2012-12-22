@@ -30,4 +30,17 @@ module ERDB_Service
     */
     funcdef GetAll(objectNames, filterClause, parameters, fields, count) returns(rowlist);
     
+    typedef string SQLstring;
+    
+    /*
+    WARNING: this is a function of last resort. Try to do what you need to do with the CDMI client or the
+    GetAll function first.
+    Runs a standard SQL query via the ERDB DB hook. Be sure not to code inputs into the SQL string - put them
+    in the parameter list and use ? placeholders in the SQL. Otherwise you risk SQL injection. If you don't
+    understand this paragraph, do not use this function.
+    Note that most likely, the account for this server only has select privileges and cannot modify the
+    database.
+    */
+    funcdef runSQL(SQLstring, parameters) returns(rowlist);
+    
 };

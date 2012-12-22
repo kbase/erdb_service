@@ -44,6 +44,16 @@ isa_ok($client,$class, "Is it the right class?");
 
 ++$num_tests;
 
+{
+	my $expected = [['kb|g.2231', "'Nostoc azollae' 0708"]];
+	
+	my $res = $client->runSQL('select id, scientific_name from Genome limit 1', []);
+	is_deeply($res, $expected, 'checking bare sql on one genome');
+	
+	++$num_tests;
+
+}
+
 my $objectNames = 'Genome IsComposedOf Contig';
 my $filterClause = 'Genome(id) IN (?, ?) ORDER BY Genome(id)';
 my $parameters = ['kb|g.0', 'kb|g.1'];

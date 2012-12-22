@@ -29,6 +29,14 @@ the ERDB.
 use Bio::KBase::CDMI::CDMI;
 use Config::Simple;
 
+sub checkErr
+{
+	my ($sth) = @_;
+	if ($sth->err) { 
+    	die "SQL Error " . $sth->err. ': ' . $sth->errstr;
+    }
+}
+
 #END_HEADER
 
 sub new
@@ -175,6 +183,106 @@ sub GetAll
 	my $msg = "Invalid returns passed to GetAll:\n" . join("", map { "\t$_\n" } @_bad_returns);
 	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
 							       method_name => 'GetAll');
+    }
+    return($return);
+}
+
+
+
+
+=head2 runSQL
+
+  $return = $obj->runSQL($SQLstring, $parameters)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$SQLstring is an SQLstring
+$parameters is a parameters
+$return is a rowlist
+SQLstring is a string
+parameters is a reference to a list where each element is a parameter
+parameter is a string
+rowlist is a reference to a list where each element is a fieldValues
+fieldValues is a reference to a list where each element is a fieldValue
+fieldValue is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$SQLstring is an SQLstring
+$parameters is a parameters
+$return is a rowlist
+SQLstring is a string
+parameters is a reference to a list where each element is a parameter
+parameter is a string
+rowlist is a reference to a list where each element is a fieldValues
+fieldValues is a reference to a list where each element is a fieldValue
+fieldValue is a string
+
+
+=end text
+
+
+
+=item Description
+
+WARNING: this is a function of last resort. Try to do what you need to do with the CDMI client or the
+GetAll function first.
+Runs a standard SQL query via the ERDB DB hook. Be sure not to code inputs into the SQL string - put them
+in the parameter list and use ? placeholders in the SQL. Otherwise you risk SQL injection. If you don't
+understand this paragraph, do not use this function.
+Note that most likely, the account for this server only has select privileges and cannot modify the
+database.
+
+=back
+
+=cut
+
+sub runSQL
+{
+    my $self = shift;
+    my($SQLstring, $parameters) = @_;
+
+    my @_bad_arguments;
+    (!ref($SQLstring)) or push(@_bad_arguments, "Invalid type for argument \"SQLstring\" (value was \"$SQLstring\")");
+    (ref($parameters) eq 'ARRAY') or push(@_bad_arguments, "Invalid type for argument \"parameters\" (value was \"$parameters\")");
+    if (@_bad_arguments) {
+	my $msg = "Invalid arguments passed to runSQL:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'runSQL');
+    }
+
+    my $ctx = $Bio::KBase::ERDB_Service::Server::CallContext;
+    my($return);
+    #BEGIN runSQL
+    
+    my $dbk = $self->{db}->{_dbh};
+    my $attrs = {RaiseError => 1};
+    if ($dbk->dbms eq 'mysql') {
+		$attrs->{mysql_use_result} = 1;
+    }
+    my $sth = $dbk->{_dbh}->prepare($SQLstring, $attrs);
+    checkErr($sth); #not sure if this is needed
+    $sth->execute(@$parameters);
+    checkErr($sth); #this is definitely needed, execute does not raise errors
+    $return = $sth->fetchall_arrayref();
+    checkErr($sth); #not sure if this is needed
+    
+    #END runSQL
+    my @_bad_returns;
+    (ref($return) eq 'ARRAY') or push(@_bad_returns, "Invalid type for return variable \"return\" (value was \"$return\")");
+    if (@_bad_returns) {
+	my $msg = "Invalid returns passed to runSQL:\n" . join("", map { "\t$_\n" } @_bad_returns);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'runSQL');
     }
     return($return);
 }
@@ -447,6 +555,32 @@ a reference to a list where each element is a fieldValues
 =begin text
 
 a reference to a list where each element is a fieldValues
+
+=end text
+
+=back
+
+
+
+=head2 SQLstring
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a string
+</pre>
+
+=end html
+
+=begin text
+
+a string
 
 =end text
 
