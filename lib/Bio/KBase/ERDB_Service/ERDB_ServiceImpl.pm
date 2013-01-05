@@ -31,9 +31,9 @@ use Config::Simple;
 
 sub checkErr
 {
-	my ($sth) = @_;
-	if ($sth->err) { 
-    	die "SQL Error " . $sth->err. ': ' . $sth->errstr;
+    my ($sth) = @_;
+    if ($sth->err) { 
+        die "SQL Error " . $sth->err. ': ' . $sth->errstr;
     }
 }
 
@@ -55,24 +55,24 @@ sub new
 	# the deployment settings
 	my %params;
 	if (my $e = $ENV{KB_DEPLOYMENT_CONFIG}) {
-	    my $CDMI_SERVICE_NAME = "cdmi";
+	    my $CDMI_SERVICE_NAME = $ENV{KB_SERVICE_NAME};
 	    
 	    my $c = Config::Simple->new();
 	    $c->read($e);
 	    my @params = qw(DBD dbName sock userData dbhost port dbms develop);
 	    for my $p (@params)
 	    {
-			my $v = $c->param("$CDMI_SERVICE_NAME.$p");
-			if ($v)
-			{
-		    	$params{$p} = $v;
-			}
+                my $v = $c->param("$CDMI_SERVICE_NAME.$p");
+                if ($v)
+                {
+                    $params{$p} = $v;
+                }
 	    }
 	}
 	#Create a connection to the CDMI (and print a logging debug mssg)
 	if( 0 < scalar keys(%params) ) {
-	    	warn "Connection to CDMI established with the following non-default parameters:\n";
-	    	foreach my $key (sort keys %params) { warn "   $key => $params{$key} \n"; }
+            warn "Connection to CDMI established with the following non-default parameters:\n";
+            foreach my $key (sort keys %params) { warn "   $key => $params{$key} \n"; }
 	} else { warn "Connection to CDMI established with all default parameters.  See Bio/KBase/CDMI/CDMI.pm\n"; }
         $cdmi = Bio::KBase::CDMI::CDMI->new(%params);
     }
@@ -267,7 +267,7 @@ sub runSQL
     my $dbk = $self->{db}->{_dbh};
     my $attrs = {RaiseError => 1};
     if ($dbk->dbms eq 'mysql') {
-		$attrs->{mysql_use_result} = 1;
+        $attrs->{mysql_use_result} = 1;
     }
     my $sth = $dbk->{_dbh}->prepare($SQLstring, $attrs);
     checkErr($sth); #not sure if this is needed

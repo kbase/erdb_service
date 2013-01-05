@@ -46,6 +46,8 @@ compile-typespec:
 		--py biokbase/$(SERVICE_NAME_PY)/client \
 		--js javascript/$(SERVICE_NAME)/Client \
 		$(SERVICE_NAME).spec lib
+	rm lib/$(SERVICE_NAME)Server.py
+	rm lib/$(SERVICE_NAME)Impl.py
 	rm -r Bio # For some strange reason, compile_typespec always creates this directory in the root dir!
 
 build-docs: compile-typespec
@@ -60,8 +62,10 @@ test-all: test-service test-client test-scripts
 
 # will need to fix the host when code is distributed, to point
 # to the "official" instance
-test-client:
-	$(DEPLOY_RUNTIME)/bin/perl -Ilib -It $(TOP_DIR)/modules/$(SERVICE)/t/runtests.t --serviceName $(SERVICE_NAME) --port $(SERVICE_PORT) --host localhost
+test-client: test-service
+#	$(DEPLOY_RUNTIME)/bin/perl -Ilib -It $(TOP_DIR)/modules/$(SERVICE)/t/runtests.t --serviceName $(SERVICE_NAME) --port $(SERVICE_PORT) --host localhost
+# taking this test out for now since it requires a deployed, manually started server.
+# testing the client tests the server anyway, so just run the server tests. 
 
 test-scripts:
 	echo "This service has no scripts."
