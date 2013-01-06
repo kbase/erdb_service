@@ -170,7 +170,7 @@ sub GetAll
 							       method_name => 'GetAll');
     }
 
-    my $ctx = $Bio::KBase::ERDB_Service::Server::CallContext;
+    my $ctx = $Bio::KBase::ERDB_Service::Service::CallContext;
     my($return);
     #BEGIN GetAll
     
@@ -260,7 +260,7 @@ sub runSQL
 							       method_name => 'runSQL');
     }
 
-    my $ctx = $Bio::KBase::ERDB_Service::Server::CallContext;
+    my $ctx = $Bio::KBase::ERDB_Service::Service::CallContext;
     my($return);
     #BEGIN runSQL
     
