@@ -3,6 +3,7 @@ SERVICE = erdb_service
 SERVICE_NAME = ERDB_Service
 SERVICE_NAME_PY = erdb_service
 SERVICE_PSGI_FILE = $(SERVICE_NAME).psgi
+SERVICE_CONFIG_NAME = erdb
 SERVICE_PORT = 7060
 
 #standalone variables which are replaced when run via /kb/dev_container/Makefile
@@ -13,6 +14,7 @@ TARGET ?= /kb/deployment
 #for the reboot_service script, we need to get a path to dev_container/modules/"module_name".  We can do this simply
 #by getting the absolute path to this makefile.  Note that very old versions of make might not support this line.
 ROOT_DEV_MODULE_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+KB_DEPLOYMENT_CONFIG ?= $(ROOT_DEV_MODULE_DIR)/deploy.cfg
 
 # including the common makefile gives us a handle to the service directory.  This is
 # where we will (for now) dump the service log files
@@ -110,33 +112,42 @@ deploy-service-libs:
 
 # creates start/stop/reboot scripts and copies them to the deployment target
 deploy-service-scripts:
+	
 	# First create the start script (should be a better way to do this...)
 	echo '#!/bin/sh' > ./start_service
 	echo "echo starting $(SERVICE) service." >> ./start_service
 	echo 'export PERL5LIB=$$PERL5LIB:$(TARGET)/lib' >> ./start_service
+	echo 'export KB_DEPLOYMENT_CONFIG=$(KB_DEPLOYMENT_CONFIG)' >> ./start_service
+	echo 'export KB_SERVICE_NAME=$(SERVICE_CONFIG_NAME)' >> ./start_service
 	echo '#uncomment to debug: export STARMAN_DEBUG=1' >> ./start_service
 	echo "$(DEPLOY_RUNTIME)/bin/starman --listen :$(SERVICE_PORT) --pid $(PID_FILE) --daemonize \\" >> ./start_service
 	echo "  --access-log $(ACCESS_LOG_FILE) \\" >>./start_service
 	echo "  --error-log $(ERR_LOG_FILE) \\" >> ./start_service
 	echo "  $(TARGET)/lib/$(SERVICE_PSGI_FILE)" >> ./start_service
 	echo "echo $(SERVICE) service is listening on port $(SERVICE_PORT).\n" >> ./start_service
+	
 	# Second, create a debug start script that is not daemonized
 	echo '#!/bin/sh' > ./debug_start_service
 	echo 'export PERL5LIB=$$PERL5LIB:$(TARGET)/lib' >> ./debug_start_service
+	echo 'export KB_DEPLOYMENT_CONFIG=$(KB_DEPLOYMENT_CONFIG)' >> ./start_service
+	echo 'export KB_SERVICE_NAME=$(SERVICE_CONFIG_NAME)' >> ./start_service
 	echo 'export STARMAN_DEBUG=1' >> ./debug_start_service
 	echo "$(DEPLOY_RUNTIME)/bin/starman --listen :$(SERVICE_PORT) --workers 1 \\" >> ./debug_start_service
 	echo "    $(TARGET)/lib/$(SERVICE_PSGI_FILE)" >> ./debug_start_service
-	# Second create the stop script (should be a better way to do this...)
+	
+	# Third create the stop script (should be a better way to do this...)
 	echo '#!/bin/sh' > ./stop_service
 	echo "echo trying to stop $(SERVICE) service." >> ./stop_service
 	echo "pid_file=$(PID_FILE)" >> ./stop_service
 	echo "if [ ! -f \$$pid_file ] ; then " >> ./stop_service
 	echo "\techo \"No pid file: \$$pid_file found for service $(SERVICE).\"\n\texit 1\nfi" >> ./stop_service
 	echo "pid=\$$(cat \$$pid_file)\nkill \$$pid\n" >> ./stop_service
+	
 	# Finally create a script to reboot the service by stopping, redeploying the service, and starting again
 	echo '#!/bin/sh' > ./reboot_service
 	echo '# auto-generated script to stop the service, redeploy service implementation, and start the servce' >> ./reboot_service
 	echo "./stop_service\ncd $(ROOT_DEV_MODULE_DIR)\nmake deploy-service-libs\ncd -\n./start_service" >> ./reboot_service
+	
 	# Actually run the deployment of these scripts
 	chmod +x start_service stop_service reboot_service debug_start_service
 	mkdir -p $(SERVICE_DIR)
