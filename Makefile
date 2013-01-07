@@ -48,8 +48,8 @@ compile-typespec:
 		--py biokbase/$(SERVICE_NAME_PY)/client \
 		--js javascript/$(SERVICE_NAME)/Client \
 		$(SERVICE_NAME).spec lib
-	rm -f lib/$(SERVICE_NAME)Server.py
-	rm -f lib/$(SERVICE_NAME)Impl.py
+	-rm lib/$(SERVICE_NAME)Server.py
+	-rm lib/$(SERVICE_NAME)Impl.py
 	rm -r Bio # For some strange reason, compile_typespec always creates this directory in the root dir!
 
 build-docs: compile-typespec
