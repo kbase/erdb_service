@@ -4,7 +4,7 @@ SERVICE_NAME = ERDB_Service
 SERVICE_NAME_PY = erdb_service
 SERVICE_PSGI_FILE = $(SERVICE_NAME).psgi
 SERVICE_CONFIG_NAME = erdb
-SERVICE_PORT = 7060
+SERVICE_PORT = 7099
 
 #standalone variables which are replaced when run via /kb/dev_container/Makefile
 TOP_DIR = ../..
