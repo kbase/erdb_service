@@ -50,7 +50,7 @@ compile-typespec:
 		$(SERVICE_NAME).spec lib
 	-rm lib/$(SERVICE_NAME)Server.py
 	-rm lib/$(SERVICE_NAME)Impl.py
-	rm -r Bio # For some strange reason, compile_typespec always creates this directory in the root dir!
+	-rm -r Bio # For some strange reason, compile_typespec always creates this directory in the root dir!
 
 build-docs: compile-typespec
 	mkdir -p docs
