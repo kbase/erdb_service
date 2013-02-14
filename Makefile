@@ -47,6 +47,7 @@ compile-typespec:
 		--client Bio::KBase::$(SERVICE_NAME)::Client \
 		--py biokbase/$(SERVICE_NAME_PY)/client \
 		--js javascript/$(SERVICE_NAME)/Client \
+		--url http://kbase.us/services/erdb_service \
 		$(SERVICE_NAME).spec lib
 	-rm lib/$(SERVICE_NAME)Server.py
 	-rm lib/$(SERVICE_NAME)Impl.py
