@@ -14,7 +14,6 @@ TARGET ?= /kb/deployment
 #for the reboot_service script, we need to get a path to dev_container/modules/"module_name".  We can do this simply
 #by getting the absolute path to this makefile.  Note that very old versions of make might not support this line.
 ROOT_DEV_MODULE_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
-KB_DEPLOYMENT_CONFIG ?= $(ROOT_DEV_MODULE_DIR)/deploy.cfg
 
 # including the common makefile gives us a handle to the service directory.  This is
 # where we will (for now) dump the service log files
@@ -118,7 +117,10 @@ deploy-service-scripts:
 	echo '#!/bin/sh' > ./start_service
 	echo "echo starting $(SERVICE) service." >> ./start_service
 	echo 'export PERL5LIB=$$PERL5LIB:$(TARGET)/lib' >> ./start_service
-	echo 'export KB_DEPLOYMENT_CONFIG=$(KB_DEPLOYMENT_CONFIG)' >> ./start_service
+	echo 'if [ -z "$$KB_DEPLOYMENT_CONFIG" ]' >> ./start_service
+	echo 'then' >> ./start_service
+	echo '    export KB_DEPLOYMENT_CONFIG=$(TARGET)/deployment.cfg' >> ./start_service
+	echo 'fi' >> ./start_service
 	echo 'export KB_SERVICE_NAME=$(SERVICE_CONFIG_NAME)' >> ./start_service
 	echo '#uncomment to debug: export STARMAN_DEBUG=1' >> ./start_service
 	echo "$(DEPLOY_RUNTIME)/bin/starman --listen :$(SERVICE_PORT) --pid $(PID_FILE) --daemonize \\" >> ./start_service
@@ -130,7 +132,10 @@ deploy-service-scripts:
 	# Second, create a debug start script that is not daemonized
 	echo '#!/bin/sh' > ./debug_start_service
 	echo 'export PERL5LIB=$$PERL5LIB:$(TARGET)/lib' >> ./debug_start_service
-	echo 'export KB_DEPLOYMENT_CONFIG=$(KB_DEPLOYMENT_CONFIG)' >> ./debug_start_service
+	echo 'if [ -z "$$KB_DEPLOYMENT_CONFIG" ]' >> ./debug_start_service
+	echo 'then' >> ./debug_start_service
+	echo '    export KB_DEPLOYMENT_CONFIG=$(TARGET)/deployment.cfg' >> ./debug_start_service
+	echo 'fi' >> ./debug_start_service
 	echo 'export KB_SERVICE_NAME=$(SERVICE_CONFIG_NAME)' >> ./debug_start_service
 	echo 'export STARMAN_DEBUG=1' >> ./debug_start_service
 	echo "$(DEPLOY_RUNTIME)/bin/starman --listen :$(SERVICE_PORT) --workers 1 \\" >> ./debug_start_service
