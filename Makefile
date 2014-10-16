@@ -127,7 +127,7 @@ deploy-service-scripts:
 	echo "  --access-log $(ACCESS_LOG_FILE) \\" >>./start_service
 	echo "  --error-log $(ERR_LOG_FILE) \\" >> ./start_service
 	echo "  $(TARGET)/lib/$(SERVICE_PSGI_FILE)" >> ./start_service
-	echo "echo $(SERVICE) service is listening on port $(SERVICE_PORT).\n" >> ./start_service
+	echo "echo $(SERVICE) service is listening on port $(SERVICE_PORT)." >> ./start_service
 	
 	# Second, create a debug start script that is not daemonized
 	echo '#!/bin/sh' > ./debug_start_service
@@ -146,8 +146,11 @@ deploy-service-scripts:
 	echo "echo trying to stop $(SERVICE) service." >> ./stop_service
 	echo "pid_file=$(PID_FILE)" >> ./stop_service
 	echo "if [ ! -f \$$pid_file ] ; then " >> ./stop_service
-	echo "\techo \"No pid file: \$$pid_file found for service $(SERVICE).\"\n\texit 1\nfi" >> ./stop_service
-	echo "pid=\$$(cat \$$pid_file)\nkill \$$pid\n" >> ./stop_service
+	echo "  echo No pid file: \$$pid_file found for service $(SERVICE)." >> ./stop_service
+	echo "  exit 1" >> ./stop_service
+	echo "fi" >> ./stop_service
+	echo "pid=\$$(cat \$$pid_file)" >> ./stop_service
+	echo "kill \$$pid" >> ./stop_service
 	
 	# Finally create a script to reboot the service by stopping, redeploying the service, and starting again
 	echo '#!/bin/sh' > ./reboot_service
